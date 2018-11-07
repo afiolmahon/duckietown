@@ -1,0 +1,23 @@
+camera_matrix:
+  cols: 3
+  data: [309.749450691536, 0.0, 317.00810109988504, 0.0, 307.26046463486625, 236.19674083597067,
+    0.0, 0.0, 1.0]
+  rows: 3
+camera_name: ducky25/camera_node
+distortion_coefficients:
+  cols: 5
+  data: [-0.29324197729857776, 0.06801891733386005, 0.001003340107316258, -0.00039575467541191054,
+    0.0]
+  rows: 1
+distortion_model: plumb_bob
+image_height: 480
+image_width: 640
+projection_matrix:
+  cols: 4
+  data: [221.0705108642578, 0.0, 316.64424091596993, 0.0, 0.0, 236.8305206298828,
+    234.68189397185597, 0.0, 0.0, 0.0, 1.0, 0.0]
+  rows: 3
+rectification_matrix:
+  cols: 3
+  data: [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+  rows: 3
