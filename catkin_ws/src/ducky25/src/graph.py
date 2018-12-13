@@ -9,7 +9,6 @@ CMD_RIGHT = 'RIGHT' # right turn at intersection
 CMD_STRAIGHT = 'STRAIGHT' # go straight at intersection
 CMD_BACK = 'BACK' # go backwards at intersection, shouldnt be needed
 CMD_PASS = 'PASS' # apready at destination, continue without action
-CMD_NOPATH = 'NOPATH' # raise an error
 
 # Compass direction constants
 NORTH = 0
@@ -48,7 +47,10 @@ class DuckyNode:
         for i in range(len(self.adjacent_node_ids)):
             if next_node_id == self.adjacent_node_ids[i]:
                 return get_direction_to_orientation(orientation, i)
-        return CMD_PASS if (next_node_id == self.id) else CMD_NOPATH # Return no path if no adjacent were found or next node is not self
+        if (next_node_id == self.id):
+            return CMD_PASS
+        else:
+            raise Exception('[get_direction_to_next] No Path found, node {} does not connect to {}'.format(self.id, next_node_id))
 
 class DuckyGraph:
     def __init__(self):
