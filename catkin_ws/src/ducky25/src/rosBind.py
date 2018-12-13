@@ -1,10 +1,43 @@
 '''
-rosdrive.py
+rosBind.py
 
 '''
 
-class ROSInterface:
-    '''Inteface for driving commands to encapsulate ROS specific code'''
+try:
+
+    class ROSInterface:
+        '''Inteface for driving commands to encapsulate ROS specific code'''
+
+        def __init__(self):
+            pass
+
+        def intersectionLeft(self):
+            raise Exception('Method unimplemented')
+
+        def intersectionRight(self):
+            raise Exception('Method unimplemented')
+        
+        def intersectionStraight(self):
+            raise Exception('Method unimplemented')
+        
+        def intersectionBack(self):
+            raise Exception('Method unimplemented')
+
+        def nextIntersection(self):
+            raise Exception('Method unimplemented')
+
+        def driveToTag(self, tagid):
+            raise Exception('Method unimplemented')
+
+        def log(self, message):
+            rospy.loginfo('[ROSInterface]{}'.format(message))
+
+except Exception as e:
+    print(e)
+
+
+class ROSInterFake(ROSInterface):
+    '''Test logic under ideal physical robot/ROS behavior'''
 
     def intersectionLeft(self):
         print('Left at Intersection...')

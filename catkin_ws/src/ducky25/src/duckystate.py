@@ -5,9 +5,8 @@ navigate.py
 
 from queue import DestinationQueue
 import graph
-import rosBind
+from rosBind import ROSInterface
 
-NODE_NAME = 'navigator'
 NO_DESTINATION = -1
 
 
@@ -16,7 +15,7 @@ class DuckyState:
 		self.queue = DestinationQueue()
 		self.current_node_id = start_node_id
 		self.orientation = start_orientation
-		self.duckyBot = rosBind.ROSInterface()
+		self.duckyBot = ROSInterface()
 		self.duckyGraph = ducky_graph
 
 	def drive(self, command, artag=-1):
@@ -37,6 +36,8 @@ class DuckyState:
 		else:
 			self.duckyBot.driveToTag(artag)
 		
+	def state_machine(self):
+		self.duckyBot.log('statemachine called')
 
 	def drive_to_target(self):
 		# Get next destination and create a path to it
@@ -57,9 +58,5 @@ class DuckyState:
 			self.current_node_id = next_node_id
 			self.duckyBot.log('[drive_to_target()]POST MOVE {}: orientation: {}, node_id: {}'.format(i, self.orientation, self.current_node_id))
 
-def main():
-	duckyGraph = graph.DuckyGraph()
-	ducky = DuckyState(duckyGraph, 0, graph.NORTH)
-
-if __name__ == '__main__':
-	main()
+	def onShutdown(self):
+		pass
