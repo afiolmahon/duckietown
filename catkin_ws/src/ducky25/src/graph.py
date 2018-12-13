@@ -11,53 +11,44 @@ CMD_BACK = 'BACK' # go backwards at intersection, shouldnt be needed
 CMD_PASS = 'PASS' # apready at destination, continue without action
 CMD_NOPATH = 'NOPATH' # raise an error
 
-# direction constants
+# Compass direction constants
 NORTH = 0
 EAST = 1
 SOUTH = 2
 WEST = 3
 
 # Map direction coming into node to a direction leaving the node
-ORIENTATION_DIRECTION_MAPPER = [[CMD_STRAIGHT, CMD_RIGHT, CMD_BACK, CMD_LEFT],
-                                [CMD_LEFT, CMD_STRAIGHT, CMD_RIGHT, CMD_BACK],
-                                [CMD_BACK, CMD_LEFT, CMD_STRAIGHT, CMD_RIGHT],
-                                [CMD_RIGHT, CMD_BACK, CMD_LEFT, CMD_STRAIGHT]]
+DIRS = [CMD_STRAIGHT, CMD_RIGHT, CMD_BACK, CMD_LEFT]
 
 def get_direction_to_orientation(current_dir, next_dir):
-    return ORIENTATION_DIRECTION_MAPPER[current_dir][next_dir]
+    ''' Calculate direction to leave node in specified NESW based on current orientation (Ex. If facing east and want to go south take a right)'''
+    return DIRS[(4-current_dir+next_dir)%4]
     
 
 class DuckyNode:
     def __init__(self, node_id, north_id, east_id, south_id, west_id):
         self.id = node_id
-        self.north = north_id
-        self.east = east_id
-        self.south = south_id
-        self.west = west_id
+        self.adjacent_node_ids = [north_id, east_id, south_id, west_id] # indices correspond to compass directional constants
 
     def get_edges(self):
         """Get all edges that connect to this node"""
-        return [
-            (self.id, self.north), (self.north, self.id),
-            (self.id, self.east), (self.east, self.id),
-            (self.id, self.south), (self.south, self.id),
-            (self.id, self.west), (self.west, self.id)
-        ]
+        edges = []
+        for node_id in self.adjacent_node_ids:
+            edges.append((self.id, node_id))
+            edges.append((node_id, self.id))
+        return edges
 
-    def get_direction_to_next(self, orientation, next_node):
-        if next_node == self.north:
-            return get_direction_to_orientation(orientation, NORTH)
-        elif next_node == self.east:
-            return get_direction_to_orientation(orientation, EAST)
-        elif next_node == self.south:
-            return get_direction_to_orientation(orientation, SOUTH)
-        elif next_node == self.west:
-            return get_direction_to_orientation(orientation, WEST)
-        elif next_node == self.id:
-            return CMD_PASS
-        else:
-            return CMD_NOPATH
+    def get_orientation_from_previous(self, previous_node_id):
+        for i in range(len(self.adjacent_node_ids)):
+            if previous_node_id == self.adjacent_node_ids[i]:
+                return i
+        raise Exception('get_orientation_from_previous: Invalid previous_node_id {}'.format(previous_node_id))
 
+    def get_direction_to_next(self, orientation, next_node_id):
+        for i in range(len(self.adjacent_node_ids)):
+            if next_node_id == self.adjacent_node_ids[i]:
+                return get_direction_to_orientation(orientation, i)
+        return CMD_PASS if (next_node_id == self.id) else CMD_NOPATH # Return no path if no adjacent were found or next node is not self
 
 class DuckyGraph:
     def __init__(self):
@@ -70,10 +61,12 @@ class DuckyGraph:
         return self.nodes[node_id]
 
     def get_path_weight(self, n1, n2):
+        # TODO implement
         """ use dijkstras algorithm to find path between 2 nodes"""
         return 10
 
     def get_path(self, n1, n2):
+        # TODO implement
         """ use pathfinding algorithm to return a series of nodes from start to end path"""
         return ['p1', 'p2', 'p3']
 
