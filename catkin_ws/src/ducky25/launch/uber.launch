@@ -47,14 +47,6 @@
         <arg name="param_file_name" value="$(arg param_file_name)"/>        
     </include>
 
-	<group if="$(arg drive)">
-        <!-- Wheel Driver -->
-	<remap from="wheels_driver_node/wheels_cmd" to="inverse_kinematics_node/wheels_cmd"/>
-    	<include if="$(arg live)" file="$(find dagu_car)/launch/wheels_driver_node.launch">
-            <arg name="veh" value="$(arg veh)"/>
-        </include>
-    </group>
-
 	<node name="duckyuber" pkg="ducky25" type="main.py" output="screen">
 		<!-- Setup parameters -->
 		<param name="~bot_timestep" value="0.5"/>
@@ -62,4 +54,20 @@
 		<!--<remap from="~topic_b" to="~topic_a"/> -->
 		<!-- <remap from="~topic_b" to="talker/topic_a"/> -->
 	</node>
+
+	 <!-- car_cmd_switch_node -->
+    <remap from="inverse_kinematics_node/car_cmd" to="lane_controller_node/car_cmd"/>
+    <include file="$(find dagu_car)/launch/inverse_kinematics_node.launch">
+        <arg name="veh" value="$(arg veh)"/>
+        <arg name="local" value="$(arg local)"/>
+        <arg name="config" value="$(arg config)"/>
+    </include>
+
+    <group if="$(arg drive)">
+        <!-- Wheel Driver -->
+	<remap from="wheels_driver_node/wheels_cmd" to="inverse_kinematics_node/wheels_cmd"/>
+    	<include if="$(arg live)" file="$(find dagu_car)/launch/wheels_driver_node.launch">
+            <arg name="veh" value="$(arg veh)"/>
+        </include>
+    </group>
 </launch>
