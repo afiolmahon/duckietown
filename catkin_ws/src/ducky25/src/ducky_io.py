@@ -29,16 +29,13 @@ try:
         def __init__(self):
             self.drive_state = 0
             self.at_intersection = False
-             # create publisher to enable/disable lane control
-            self.pub_lane_control = rospy.Publisher("/ducky25/lane_controller_node/enabled", BoolStamped, queue_size=1)
+            self.lane_control_func = lambda x: 'Fake enable set to {}'.format(x)
 
         def openLoopTurn(self, direction):
             pass
 
         def setLaneControl(self, enabled):
-            msg = BoolStamped()
-            msg.data = enabled
-            self.pub_lane_control.publish(msg)
+            self.lane_control_func(enabled)
 
         def drive_intersection(self, direction, tagid=-1):
             if self.drive_state == 0:
