@@ -23,7 +23,6 @@ class DuckyIO:
 
 try:
     import rospy
-    from duckietown_msgs.msg import  Twist2DStamped, LanePose, BoolStamped, String
 
     class ROSIO(DuckyIO):
         def __init__(self):
