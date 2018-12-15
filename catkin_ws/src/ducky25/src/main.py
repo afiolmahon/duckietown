@@ -58,7 +58,7 @@ class DuckyNode(object):
     def handle_stopline_reading(self, msg):
         # Update DuckyIO with information
         #self.ducky_bot.io.log('stop_line_detected: {}, at_stop_line: {}'.format(msg.stop_line_detected, msg.at_stop_line))
-        self.is_at_intersection = msg.stop_line_detected
+        self.is_at_intersection = msg.at_stop_line
 
     def periodic_task(self, event):
         self.ducky_bot.io.at_intersection = self.is_at_intersection
