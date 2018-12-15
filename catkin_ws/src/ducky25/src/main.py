@@ -49,7 +49,7 @@ class DuckyNode(object):
 def main():
     graph = ducky_graph.DuckyGraph()
     bot_io = ducky_io.ROSIO()
-    start_node_id = 0
+    start_node_id = 'A'
     start_orientation = 0
     bot = ducky_bot.DuckyBot(graph, bot_io, start_node_id, start_orientation)
 
