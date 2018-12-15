@@ -1,4 +1,9 @@
 <launch>
+    <arg name="config" default="baseline" doc="Specify a config."/>
+
+	<node machine="ducky25" name="stop_line_filter" pkg="stop_line_filter" type="stop_line_filter.py" output="screen" clear_params="true" required="true">
+    </node>
+	
 	<node name="duckyuber" pkg="ducky25" type="main.py" output="screen">
 		<!-- Setup parameters -->
 		<param name="~bot_timestep" value="0.5"/>

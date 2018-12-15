@@ -25,8 +25,11 @@ try:
     import rospy
     
     class ROSIO(DuckyIO):
+        def __init__(self):
+            self.at_intersection = False
+
         def drive_intersection(self, direction, tagid=-1):
-            raise Exception('Method drive_intersection unimplemented')
+            return self.at_intersection
 
         def log(self, message):
             message_string = '[ROSInterface]{}'.format(message)

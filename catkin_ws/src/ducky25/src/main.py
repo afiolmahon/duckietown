@@ -4,6 +4,7 @@
 main.py
 Defines node for ROS
 '''
+from duckietown_msgs.msg import StopLineReading
 
 import rospy
 
@@ -27,6 +28,8 @@ class DuckyNode(object):
         self.ducky_bot = ducky_bot
         # Read parameters
         self.bot_timestep = self.setupParameter('~bot_timestep', time_step)
+        # create subscriber to read stopline data from filter node
+        self.sub_topic_b = rospy.Subscriber("stop_line_filter/at_stop_line", StopLineReading, self.handle_stopline_reading)
         # Create a timer that calls the cbTimer function every 1.0 second
         self.timer = rospy.Timer(rospy.Duration.from_sec(self.bot_timestep), self.periodic_task)
 
@@ -37,6 +40,10 @@ class DuckyNode(object):
         rospy.set_param(param_name,value) #Write to parameter server for transparancy
         rospy.loginfo('[%s] %s = %s ' %(self.node_name,param_name,value))
         return value
+
+    def handle_stopline_reading(self, msg):
+        # Update DuckyIO with information
+        self.ducky_bot.io.log('stop_line_detected: {}, at_stop_line: {}'.format(msg.stop_line_detected, msg.stop_line_filter))
 
     def periodic_task(self, event):
         self.ducky_bot.state_machine()
