@@ -38,7 +38,7 @@ try:
             self.lane_control_func(enabled)
 
         def drive_intersection(self, direction, tagid=-1):
-            self.log('drive_intersection called!')
+            self.log('drive_intersection called! state: {}'.format(self.drive_state))
             if self.drive_state == 0:
                 # Open loop turn
                 self.openLoopTurn(direction)
