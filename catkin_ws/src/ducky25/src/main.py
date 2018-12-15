@@ -41,9 +41,9 @@ class DuckyNode(object):
     def periodic_task(self):
         self.ducky_bot.state_machine()
 
+    def on_shutdown(self):
+        rospy.loginfo('[%s] Shutting down.' %(self.node_name))
 
-def on_shutdown(self):
-    rospy.loginfo('[%s] Shutting down.' %(self.node_name))
 
 def main():
     graph = ducky_graph.DuckyGraph()
@@ -59,7 +59,7 @@ def main():
     # Initialize representation objects
     ducky = DuckyNode(bot, TIMESTEP)
     # configure shutdown behavior
-    rospy.on_shutdown(ducky.on_shutdown())
+    rospy.on_shutdown(ducky.on_shutdown)
     # keep node alive
     rospy.spin()
 
