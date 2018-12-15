@@ -69,7 +69,8 @@ class DuckyNode(object):
 
 def main():
     # Create State
-    bot = ducky_bot.DuckyBot(ducky_graph.DuckyGraph(), ducky_io.ROSIO(), 'A', 0)
+    robot_io = ducky_io.ROSIO()
+    bot = ducky_bot.DuckyBot(ducky_graph.DuckyGraph(), robot_io, 'A', 0)
     # Intialize node
     rospy.init_node(NODE_NAME, anonymous=False, log_level=rospy.DEBUG)
     # Initialize representation objects
