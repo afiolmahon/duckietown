@@ -57,6 +57,3 @@ class DuckyBot:
 				self.path_position_stop = len(self.path)
 				self.path_position = 0
 				self.io.log('[state_machine()] Transitioning to move state')
-
-	def onShutdown(self):
-		pass
