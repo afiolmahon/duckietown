@@ -33,7 +33,7 @@ try:
             print(message_string)
 
 except ImportError as e:
-    raise Exception('Cannot Import rospy')
+    print('error loading rospy')
 
 
 class TestIO(DuckyIO):

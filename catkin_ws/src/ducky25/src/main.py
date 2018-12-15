@@ -27,7 +27,7 @@ class DuckyNode(object):
         # Initialize duckybot objects machine
         self.ducky_bot = ducky_bot
         # Read parameters
-        self.bot_timestep = self.setupParameter('~pub_timestep', time_step)
+        self.bot_timestep = self.setupParameter('~bot_timestep', time_step)
         # Create a timer that calls the cbTimer function every 1.0 second
         self.timer = rospy.Timer(rospy.Duration.from_sec(self.bot_timestep), self.periodic_task)
 
@@ -48,27 +48,21 @@ class DuckyNode(object):
 
 def main():
     graph = ducky_graph.DuckyGraph()
-    bot_io = ducky_io.TestIO if SIMULATOR else ducky_io.ROSIO
+    bot_io = ducky_io.ROSIO()
     start_node_id = 0
     start_orientation = 0
-
     bot = ducky_bot.DuckyBot(graph, bot_io, start_node_id, start_orientation)
 
-    if SIMULATOR:
-        while True:
-            bot.state_machine()
-            time.sleep(TIMESTEP)
-    else:
-        # Create State
-        bot = ducky_bot.DuckyBot(graph, ducky_io.ROSIO(), start_node_id, start_orientation)
-        # Intialize node
-        rospy.init_node(NODE_NAME, anonymous=False, log_level=rospy.DEBUG)
-        # Initialize representation objects
-        ducky = DuckyNode(bot, TIMESTEP)
-        # configure shutdown behavior
-        rospy.on_shutdown(ducky.on_shutdown())
-        # keep node alive
-        rospy.spin()
+    # Create State
+    bot = ducky_bot.DuckyBot(graph, ducky_io.ROSIO(), start_node_id, start_orientation)
+    # Intialize node
+    rospy.init_node(NODE_NAME, anonymous=False, log_level=rospy.DEBUG)
+    # Initialize representation objects
+    ducky = DuckyNode(bot, TIMESTEP)
+    # configure shutdown behavior
+    rospy.on_shutdown(ducky.on_shutdown())
+    # keep node alive
+    rospy.spin()
 
 if __name__ == '__main__':
 	main()

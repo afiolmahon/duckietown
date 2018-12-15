@@ -16,5 +16,5 @@ class DestinationQueue:
 			result = self.queue[self.position]
 			self.position = self.position + 1
 		else:
-			result = '-1'
+			result = -1
 		return result

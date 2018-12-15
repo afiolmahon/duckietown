@@ -11,6 +11,7 @@ import ducky_graph
 class DuckyBot:
 	def __init__(self, ducky_graph, ducky_io, start_node_id, start_orientation):
 		self.queue = DestinationQueue()
+		self.queue.add_to_queue('C')
 		self.current_node_id = start_node_id
 		self.orientation = start_orientation
 		self.io = ducky_io
@@ -28,32 +29,34 @@ class DuckyBot:
 		self.io.drive_intersection(command, artag)	
 
 	def state_machine(self):
-
-		self.io.log('statemachine called')
 		# Follow the path until the destination node is reached
 		if self.path_position < self.path_position_stop:
 			next_node_id = self.path[self.path_position]
 			# Get command to get from current node to next node
 			command = self.duckyGraph.get_node(self.current_node_id).get_direction_to_next(self.orientation, next_node_id)
+			self.io.log('[state_machine()]PRE MOVE {}: orientation: {}, node_id: {}, next_node_id: {}'.format(self.path_position, self.orientation, self.current_node_id, next_node_id))
 			self.drive(command)
 
 			# Update orientation and position
-			self.orientation = self.duckyGraph.get_node(next_node_id).get_orientation_from_previous(self.current_node_id)
-			self.current_node_id = next_node_id
-			self.io.log('[drive_to_target()]POST MOVE {}: orientation: {}, node_id: {}'.format(self.path_position, self.orientation, self.current_node_id))
+			if next_node_id != self.current_node_id:
+				self.orientation = self.duckyGraph.get_node(next_node_id).get_orientation_from_previous(self.current_node_id)
+				self.current_node_id = next_node_id
+			self.io.log('[state_machine()]POST MOVE {}: orientation: {}, node_id: {}'.format(self.path_position, self.orientation, self.current_node_id))
 
 			self.path_position = self.path_position + 1
 		else:
 			# Get next destination and create a path to it
 			destination_node_id = self.queue.pop_next_destination()
-			self.io.log('[state_machine()] Next destination: {}, Current location: {}'.format(destination_node_id, self.current_node_id))
-			self.path = self.duckyGraph.get_path(self.current_node_id, destination_node_id)
-			self.io.log('[state_machine()] Path planner has generated path: {}'.format(self.path))
+			if destination_node_id == -1:
+				self.io.log('[state_machine()] Waiting for destination from queue...')
+			else:	
+				self.io.log('[state_machine()] Next destination: {}, Current location: {}'.format(destination_node_id, self.current_node_id))
+				self.path = self.duckyGraph.get_path(self.current_node_id, destination_node_id)
+				self.io.log('[state_machine()] Path planner has generated path: {}'.format(self.path))
 
-			self.path_position_stop = len(self.path) - 1
-			self.path_position = 0
-
-			self.io.log('[state_machine()] Resetting to 0 state')
+				self.path_position_stop = len(self.path)
+				self.path_position = 0
+				self.io.log('[state_machine()] Transitioning to move state')
 
 	def onShutdown(self):
 		pass

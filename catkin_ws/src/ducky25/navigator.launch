@@ -1,3 +1,0 @@
-<launch>
-	<node name="navigator" pkg="ducky25" type="navigate.py" respawn="true" />
-</launch>
