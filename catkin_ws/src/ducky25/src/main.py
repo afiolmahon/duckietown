@@ -32,8 +32,10 @@ class DuckyNode(object):
         self.sub_topic_b = rospy.Subscriber("/ducky25/stop_line_filter_node/stop_line_reading", StopLineReading, self.handle_stopline_reading)
         # Create a timer that calls the cbTimer function every 1.0 second
         self.timer = rospy.Timer(rospy.Duration.from_sec(self.bot_timestep), self.periodic_task)
-
         rospy.loginfo('[%s] Initialzed.' %(self.node_name))
+
+        # State information for writing at beginning of periodic task
+        self.is_at_intersection = False
 
     def setupParameter(self,param_name,default_value):
         value = rospy.get_param(param_name,default_value)
@@ -43,10 +45,11 @@ class DuckyNode(object):
 
     def handle_stopline_reading(self, msg):
         # Update DuckyIO with information
-        self.ducky_bot.io.log('handle reading!')
-        self.ducky_bot.io.log('stop_line_detected: {}, at_stop_line: {}'.format(msg.stop_line_detected, msg.at_stop_line))
+        #self.ducky_bot.io.log('stop_line_detected: {}, at_stop_line: {}'.format(msg.stop_line_detected, msg.at_stop_line))
+        self.is_at_intersection = msg.at_stop_line
 
     def periodic_task(self, event):
+        self.ducky_bot.io.at_intersection = self.is_at_intersection
         self.ducky_bot.state_machine()
 
     def on_shutdown(self):
@@ -54,14 +57,8 @@ class DuckyNode(object):
 
 
 def main():
-    graph = ducky_graph.DuckyGraph()
-    bot_io = ducky_io.ROSIO()
-    start_node_id = 'A'
-    start_orientation = 0
-    bot = ducky_bot.DuckyBot(graph, bot_io, start_node_id, start_orientation)
-
     # Create State
-    bot = ducky_bot.DuckyBot(graph, ducky_io.ROSIO(), start_node_id, start_orientation)
+    bot = ducky_bot.DuckyBot(ducky_graph.DuckyGraph(), ducky_io.ROSIO(), 'A', 0)
     # Intialize node
     rospy.init_node(NODE_NAME, anonymous=False, log_level=rospy.DEBUG)
     # Initialize representation objects

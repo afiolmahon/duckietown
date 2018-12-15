@@ -2,7 +2,7 @@
 import rospy
 import numpy as np
 import math
-from duckietown_msgs.msg import  Twist2DStamped, LanePose
+from duckietown_msgs.msg import  Twist2DStamped, LanePose, BoolStamped
 
 class lane_controller(object):
     def __init__(self):
@@ -19,6 +19,7 @@ class lane_controller(object):
 
         # Subscriptions
         self.sub_lane_reading = rospy.Subscriber("~lane_pose", LanePose, self.cbPose, queue_size=1)
+        self.sub_enable_disable = rospy.Subscriber("~enabled", BoolStamped, self.setEnable, queue_size=1)
 
         # safe shutdown
         rospy.on_shutdown(self.custom_shutdown)
@@ -101,7 +102,24 @@ class lane_controller(object):
         self.pub_car_cmd.publish(car_cmd_msg)
         #self.pub_wheels_cmd.publish(wheels_cmd_msg)
 
+    def setEnable(self, msg):
+        self.enabled = msg.data
+        if self.enabled == False:
+            # Send stop command
+            car_control_msg = Twist2DStamped()
+            car_control_msg.v = 0.0
+            car_control_msg.omega = 0.0
+            self.publishCmd(car_control_msg)
+            rospy.sleep(0.5) #To make sure that it gets published.
+            rospy.loginfo("[%s] Lane control disabled" %self.node_name)
+        else:
+            rospy.loginfo("[%s] Lane control enabled" %self.node_name)
+
+
     def cbPose(self,lane_pose_msg):
+        if self.enabled == False:
+            return
+
         self.lane_reading = lane_pose_msg 
 
         cross_track_err = lane_pose_msg.d - self.d_offset

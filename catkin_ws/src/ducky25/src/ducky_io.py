@@ -26,10 +26,28 @@ try:
     
     class ROSIO(DuckyIO):
         def __init__(self):
+            self.drive_state = 0
             self.at_intersection = False
 
+        def openLoopTurn(self, direction):
+            pass
+
+        def setLaneControl(self, enabled):
+            pass
+
         def drive_intersection(self, direction, tagid=-1):
-            return self.at_intersection
+            if self.drive_state == 0:
+                # Open loop turn
+                self.openLoopTurn(direction)
+                self.drive_state = 1
+            elif self.drive_state == 1:
+                self.setLaneControl(True)
+                # drive until we are at the intersection
+                if self.at_intersection:
+                    self.setLaneControl(False)
+                    self.drive_state = 0
+                    return True
+            return False
 
         def log(self, message):
             message_string = '[ROSInterface]{}'.format(message)
