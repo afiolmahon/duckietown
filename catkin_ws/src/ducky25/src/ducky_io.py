@@ -28,7 +28,7 @@ try:
         def __init__(self):
             self.drive_state = 0
             self.at_intersection = False
-            self.lane_control_func = lambda x: 'Fake enable set to {}'.format(x)
+            self.lane_control_func = lambda x: self.log('Fake enable set to {}'.format(x))
 
         def openLoopTurn(self, direction):
             pass
@@ -57,7 +57,6 @@ try:
         def log(self, message):
             message_string = '[ROSInterface]{}'.format(message)
             rospy.loginfo(message_string)
-            print(message_string)
 
 except ImportError as e:
     raise Exception('Cant import ROS!')
