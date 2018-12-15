@@ -15,6 +15,7 @@ class DuckyIO:
     '''Inteface to decouple ROS specific code'''
 
     def drive_intersection(self, direction, tagid=-1):
+        ''' return true when intersection is reached, false otherwise '''
         raise Exception('Method drive_intersection unimplemented')
 
     def log(self, message):
@@ -39,8 +40,9 @@ except ImportError as e:
 class TestIO(DuckyIO):
     def drive_intersection(self, direction, tagid=-1):
         print('[ROSInterface]Driving in {} direction, tagid is {}'.format(direction, tagid))
+        return True
 
     def log(self, message):
-        print('[ROSInterface]{}'.format(message))
+        print('[DUCKY IO]{}'.format(message))
 
 

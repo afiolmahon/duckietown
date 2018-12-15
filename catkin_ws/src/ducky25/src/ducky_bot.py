@@ -7,6 +7,8 @@ Coordinates the robot state/
 from ducky_queue import DestinationQueue
 import ducky_graph
 
+CMD_PASS = 'PASS'
+
 
 class DuckyBot:
 	def __init__(self, ducky_graph, ducky_io, start_node_id, start_orientation):
@@ -18,33 +20,20 @@ class DuckyBot:
 		self.duckyGraph = ducky_graph
 
 		# State machine variables
+		self.state = 0
 		self.path_position = 0
 		self.path_position_stop = 0
 		self.path = None
+		self.command = CMD_PASS
+		self.next_node_id = None
 
 	def drive(self, command, artag=-1):
 		''' Drive to next node, will drive to intersection if artag=-1 otherwise will drive to specified tag '''
-		if command == ducky_graph.CMD_PASS:	
-			return
-		self.io.drive_intersection(command, artag)	
+		return True if command == CMD_PASS else self.io.drive_intersection(command, artag)	
 
 	def state_machine(self):
-		# Follow the path until the destination node is reached
-		if self.path_position < self.path_position_stop:
-			next_node_id = self.path[self.path_position]
-			# Get command to get from current node to next node
-			command = self.duckyGraph.get_node(self.current_node_id).get_direction_to_next(self.orientation, next_node_id)
-			self.io.log('[state_machine()]PRE MOVE {}: orientation: {}, node_id: {}, next_node_id: {}'.format(self.path_position, self.orientation, self.current_node_id, next_node_id))
-			self.drive(command)
-
-			# Update orientation and position
-			if next_node_id != self.current_node_id:
-				self.orientation = self.duckyGraph.get_node(next_node_id).get_orientation_from_previous(self.current_node_id)
-				self.current_node_id = next_node_id
-			self.io.log('[state_machine()]POST MOVE {}: orientation: {}, node_id: {}'.format(self.path_position, self.orientation, self.current_node_id))
-
-			self.path_position = self.path_position + 1
-		else:
+		if self.state == 0:
+			''' calculate path and drive '''
 			# Get next destination and create a path to it
 			destination_node_id = self.queue.pop_next_destination()
 			if destination_node_id == -1:
@@ -57,3 +46,30 @@ class DuckyBot:
 				self.path_position_stop = len(self.path)
 				self.path_position = 0
 				self.io.log('[state_machine()] Transitioning to move state')
+				# State transition
+				self.state = 1
+		elif self.state == 1:
+			''' calculate position and wait for next state '''
+			if self.path_position < self.path_position_stop:
+				# Drive to next node along path
+				self.next_node_id = self.path[self.path_position]
+				# Get command to get from current node to next node
+				self.command = self.duckyGraph.get_node(self.current_node_id).get_direction_to_next(self.orientation, self.next_node_id)
+				self.io.log('[state_machine()]PRE MOVE {}: orientation: {}, node_id: {}, next_node_id: {}'.format(self.path_position, self.orientation, self.current_node_id, self.next_node_id))
+				self.state = 2
+			else:
+				# finished navigating path, rest state to queue
+				self.state = 0
+		elif self.state == 2:
+			''' waiting for drive to complete '''
+			if self.drive(self.command): # when we have reached the destination
+				# Update orientation and position
+				if self.next_node_id != self.current_node_id:
+					self.orientation = self.duckyGraph.get_node(self.next_node_id).get_orientation_from_previous(self.current_node_id)
+					self.current_node_id = self.next_node_id
+				self.io.log('[state_machine()]POST MOVE {}: orientation: {}, node_id: {}'.format(self.path_position, self.orientation, self.current_node_id))
+
+				self.path_position = self.path_position + 1
+				self.state = 1
+			
+			
