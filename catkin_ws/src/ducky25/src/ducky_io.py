@@ -58,6 +58,7 @@ try:
             print(message_string)
 
 except ImportError as e:
+    raise Exception('Cant import ROS!')
     print('error loading rospy')
 
 
