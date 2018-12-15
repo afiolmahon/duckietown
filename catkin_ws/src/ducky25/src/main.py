@@ -4,7 +4,7 @@
 main.py
 Defines node for ROS
 '''
-from duckietown_msgs.msg import StopLineReading
+from duckietown_msgs.msg import StopLineReading, BoolStamped
 
 import rospy
 
@@ -28,6 +28,9 @@ class DuckyNode(object):
         self.ducky_bot = ducky_bot
         # Read parameters
         self.bot_timestep = self.setupParameter('~bot_timestep', time_step)
+
+        # create publisher to enable/disable lane control
+
         # create subscriber to read stopline data from filter node
         self.sub_topic_b = rospy.Subscriber("/ducky25/stop_line_filter_node/stop_line_reading", StopLineReading, self.handle_stopline_reading)
         # Create a timer that calls the cbTimer function every 1.0 second

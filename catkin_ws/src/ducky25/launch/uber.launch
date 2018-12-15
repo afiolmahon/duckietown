@@ -37,6 +37,15 @@
 	    <arg name="param_file_name" value="$(arg param_file_name)"/>
 	</include>
 
+	<!-- Lane controller -->
+    <remap from="lane_controller_node/lane_pose" to="lane_filter_node/lane_pose"/>
+    <include file="$(find lane_control)/launch/lane_controller_node.launch">
+        <arg name="veh" value="$(arg veh)"/>
+        <arg name="local" value="$(arg local)"/>
+        <arg name="config" value="$(arg config)"/>
+        <arg name="param_file_name" value="$(arg param_file_name)"/>        
+    </include>
+
 	<node name="duckyuber" pkg="ducky25" type="main.py" output="screen">
 		<!-- Setup parameters -->
 		<param name="~bot_timestep" value="0.5"/>
