@@ -39,6 +39,7 @@ class DuckyNode(object):
         rospy.loginfo('[%s] Initialzed.' %(self.node_name))
 
         # State information for writing at beginning of periodic task
+        self.initial_calibrate = False
         self.is_at_intersection = False
         self.ducky_bot.io.lane_control_func = self.set_lane_control_enable
 
@@ -60,8 +61,13 @@ class DuckyNode(object):
         self.is_at_intersection = msg.at_stop_line
 
     def periodic_task(self, event):
-        self.ducky_bot.io.at_intersection = self.is_at_intersection
-        self.ducky_bot.state_machine()
+        # get to intersection to begin state machine
+        if not self.initial_calibrate:
+            if self.ducky_bot.io.drive_intersection(0,0):
+                self.initial_calibrate = True
+        else:
+            self.ducky_bot.io.at_intersection = self.is_at_intersection
+            self.ducky_bot.state_machine()
 
     def on_shutdown(self):
         rospy.loginfo('[%s] Shutting down.' %(self.node_name))
