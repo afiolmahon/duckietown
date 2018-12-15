@@ -8,6 +8,7 @@ class lane_controller(object):
     def __init__(self):
         self.node_name = rospy.get_name()
         self.lane_reading = None
+        self.enabled = True
 
         self.pub_counter = 0
 
