@@ -30,6 +30,8 @@ class DuckyNode(object):
         self.bot_timestep = self.setupParameter('~bot_timestep', time_step)
 
         # create publisher to enable/disable lane control
+        self.pub_lane_control = rospy.Publisher("/ducky25/lane_controller_node/enabled", BoolStamped, queue_size=1)
+
 
         # create subscriber to read stopline data from filter node
         self.sub_topic_b = rospy.Subscriber("/ducky25/stop_line_filter_node/stop_line_reading", StopLineReading, self.handle_stopline_reading)
@@ -39,6 +41,13 @@ class DuckyNode(object):
 
         # State information for writing at beginning of periodic task
         self.is_at_intersection = False
+
+        self.ducky_bot.io.lane_control_func=self.set_lane_control_enable
+
+    def set_lane_control_enable(self, enabled):
+        msg = BoolStamped()
+        msg.data = enabled
+        self.pub_lane_control.publish(msg)
 
     def setupParameter(self,param_name,default_value):
         value = rospy.get_param(param_name,default_value)
