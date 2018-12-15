@@ -29,7 +29,7 @@ class DuckyNode(object):
         # Read parameters
         self.bot_timestep = self.setupParameter('~bot_timestep', time_step)
         # create subscriber to read stopline data from filter node
-        self.sub_topic_b = rospy.Subscriber("/stop_line_filter_node/stop_line_reading", StopLineReading, self.handle_stopline_reading)
+        self.sub_topic_b = rospy.Subscriber("/ducky25/stop_line_filter_node/stop_line_reading", StopLineReading, self.handle_stopline_reading)
         # Create a timer that calls the cbTimer function every 1.0 second
         self.timer = rospy.Timer(rospy.Duration.from_sec(self.bot_timestep), self.periodic_task)
 
