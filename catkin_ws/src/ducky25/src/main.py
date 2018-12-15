@@ -6,7 +6,6 @@ Defines node for ROS
 '''
 
 import rospy
-from std_msgs.msg import Strings
 
 import ducky_bot
 import ducky_graph
