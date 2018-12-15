@@ -28,7 +28,7 @@ class DuckyNode(object):
         # Read parameters
         self.bot_timestep = self.setupParameter('~bot_timestep', time_step)
         # Create a timer that calls the cbTimer function every 1.0 second
-        self.timer = rospy.Timer(rospy.Duration.from_sec(self.bot_timestep), self.ducky_bot.state_machine)
+        self.timer = rospy.Timer(rospy.Duration.from_sec(self.bot_timestep), self.periodic_task)
 
         rospy.loginfo('[%s] Initialzed.' %(self.node_name))
 
@@ -38,8 +38,8 @@ class DuckyNode(object):
         rospy.loginfo('[%s] %s = %s ' %(self.node_name,param_name,value))
         return value
 
-    # def periodic_task(self):
-    #     self.ducky_bot.state_machine()
+    def periodic_task(self, event):
+        self.ducky_bot.state_machine()
 
     def on_shutdown(self):
         rospy.loginfo('[%s] Shutting down.' %(self.node_name))
