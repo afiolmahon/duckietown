@@ -23,19 +23,22 @@ class DuckyIO:
 
 try:
     import rospy
-    from duckietown_msgs.msg import  Twist2DStamped, LanePose, BoolStamped
+    from duckietown_msgs.msg import  Twist2DStamped, LanePose, BoolStamped, String
 
     class ROSIO(DuckyIO):
         def __init__(self):
             self.drive_state = 0
             self.at_intersection = False
-            self.lane_control_func = lambda x: 'Fake enable set to {}'.format(x)
+             # create publisher to enable/disable lane control
+            self.pub_lane_control = rospy.Publisher("/ducky25/lane_controller_node/enabled", BoolStamped, queue_size=1)
 
         def openLoopTurn(self, direction):
             pass
 
         def setLaneControl(self, enabled):
-            self.lane_control_func(enabled)
+            msg = BoolStamped()
+            msg.data = enabled
+            self.pub_lane_control.publish(msg)
 
         def drive_intersection(self, direction, tagid=-1):
             if self.drive_state == 0:
