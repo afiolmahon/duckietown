@@ -6,6 +6,7 @@
 	<arg name="param_file_name" default="default" doc="Specify a param file. ex:megaman." />
 	<arg name="live" default="true" doc="if set to true, run the camera and do live detection. "/>
 	<arg name="only" default="false" doc="Only run the ground_projection part when set to true."/>
+	<arg name="drive" default="true"/>
 
 	<!-- Ground projection -->
 	<include unless="$(arg only)" file="$(find duckietown)/launch/ground_projection.launch">
@@ -45,6 +46,14 @@
         <arg name="config" value="$(arg config)"/>
         <arg name="param_file_name" value="$(arg param_file_name)"/>        
     </include>
+
+	<group if="$(arg drive)">
+        <!-- Wheel Driver -->
+	<remap from="wheels_driver_node/wheels_cmd" to="inverse_kinematics_node/wheels_cmd"/>
+    	<include if="$(arg live)" file="$(find dagu_car)/launch/wheels_driver_node.launch">
+            <arg name="veh" value="$(arg veh)"/>
+        </include>
+    </group>
 
 	<node name="duckyuber" pkg="ducky25" type="main.py" output="screen">
 		<!-- Setup parameters -->
