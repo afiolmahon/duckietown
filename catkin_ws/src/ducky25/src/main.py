@@ -66,8 +66,8 @@ class DuckyNode(object):
             if self.ducky_bot.io.drive_intersection(0,0):
                 self.initial_calibrate = True
         else:
-            self.ducky_bot.io.at_intersection = self.is_at_intersection
-            self.ducky_bot.state_machine()
+            # self.ducky_bot.io.at_intersection = self.is_at_intersection
+            # self.ducky_bot.state_machine()
 
     def on_shutdown(self):
         rospy.loginfo('[%s] Shutting down.' %(self.node_name))
