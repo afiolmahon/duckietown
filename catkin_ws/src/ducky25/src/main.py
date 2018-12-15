@@ -61,12 +61,12 @@ class DuckyNode(object):
         self.is_at_intersection = msg.stop_line_detected
 
     def periodic_task(self, event):
+        self.ducky_bot.io.at_intersection = self.is_at_intersection
         # get to intersection to begin state machine
         if not self.initial_calibrate:
             if self.ducky_bot.io.drive_intersection(0,0):
                 self.initial_calibrate = True
         else:
-            # self.ducky_bot.io.at_intersection = self.is_at_intersection
             # self.ducky_bot.state_machine()
             pass
 
