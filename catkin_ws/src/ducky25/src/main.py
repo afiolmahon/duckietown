@@ -68,6 +68,7 @@ class DuckyNode(object):
         else:
             # self.ducky_bot.io.at_intersection = self.is_at_intersection
             # self.ducky_bot.state_machine()
+            pass
 
     def on_shutdown(self):
         rospy.loginfo('[%s] Shutting down.' %(self.node_name))
