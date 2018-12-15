@@ -1,7 +1,10 @@
 <launch>
     <arg name="config" default="baseline" doc="Specify a config."/>
-
-	<node name="stop_line_filter" pkg="stop_line_filter" type="stop_line_filter_node.py" output="screen" clear_params="true" required="true">
+ 	<arg name="pkg_name" value="stop_line_filter"/>
+    <arg name="node_name" default="stop_line_filter_node"/>
+	<arg name="param_file_name" default="default" doc="Specify a param file. ex:megaman." />
+	<node name="$(arg node_name)" pkg="$(arg pkg_name)" type="$(arg node_name).py" output="screen" clear_params="true" required="true">
+        <rosparam command="load" file="$(find duckietown)/config/$(arg config)/$(arg pkg_name)/$(arg node_name)/$(arg param_file_name).yaml"/>
     </node>
 
 	<node name="duckyuber" pkg="ducky25" type="main.py" output="screen">
