@@ -43,6 +43,7 @@ class DuckyNode(object):
 
     def handle_stopline_reading(self, msg):
         # Update DuckyIO with information
+        self.ducky_bot.io.log('handle reading!')
         self.ducky_bot.io.log('stop_line_detected: {}, at_stop_line: {}'.format(msg.stop_line_detected, msg.stop_line_filter))
 
     def periodic_task(self, event):
