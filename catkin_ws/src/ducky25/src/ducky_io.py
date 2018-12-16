@@ -12,9 +12,7 @@ DIR_BACK = 2
 DIR_LEFT = 3
 DIRS = [DIR_SRAIGHT, DIR_RIGHT, DIR_BACK, DIR_LEFT]
 
-SRV_TURN_S = "/ducky25/open_loop_intersection_control_node/turn_forward"
-SRV_TURN_L = "/ducky25/open_loop_intersection_control_node/turn_left"
-SRV_TURN_R = "/ducky25/open_loop_intersection_control_node/turn_right"
+TOPIC_CAR_CMD = "/ducky25/lane_controller_node/car_cmd"
 
 class DuckyIO:
     '''Inteface to decouple ROS specific code'''
@@ -28,35 +26,46 @@ class DuckyIO:
 
 try:
     import rospy
-    from std_srvs.srv import EmptyRequest, EmptyResponse, Empty
+    from duckietown_msgs.msg import Twist2DStamped
+
 
     class ROSIO(DuckyIO):
         def __init__(self):
             self.drive_state = 2
             self.at_intersection = False
-            self.finished_turn = False
             self.lane_control_func = lambda x: self.log('Fake enable set to {}'.format(x))
+            self.pub_car_cmd = rospy.Publisher(TOPIC_CAR_CMD, Twist2DStamped, queue_size=1)
 
         def openLoopTurn(self, direction):
-            try:
-                if direction == -1:
-                    pass
-                elif direction == 0:
-                    rospy.wait_for_service(SRV_TURN_S)
-                    turn_fwd = rospy.ServiceProxy(SRV_TURN_S, Empty)
-                    turn_fwd()
-                elif direction == 1:
-                    rospy.wait_for_service(SRV_TURN_R)
-                    turn_right = rospy.ServiceProxy(SRV_TURN_R, Empty)
-                    turn_right()
-                elif direction == 2:
-                    raise Exception('cant go backward!')
-                elif direction == 3:
-                    rospy.wait_for_service(SRV_TURN_L)
-                    turn_left = rospy.ServiceProxy(SRV_TURN_L, Empty)
-                    turn_left()
-            except rospy.ServiceException as e:
-                self.log('service call failed {}'.format(e))
+            if direction == -1:
+                pass
+            elif direction == 0:
+                msg = Twist2DStamped()
+                msg.v = 0.5
+                msg.omega = 0.0
+                self.pub_car_cmd.publish(msg)
+                time.sleep(2)
+            elif direction == 1:
+                msg = Twist2DStamped()
+                msg.v = 0.5
+                msg.omega = -45.0
+                self.pub_car_cmd.publish(msg)
+                time.sleep(2)
+            elif direction == 2:
+                raise Exception('cant go backward!')
+            elif direction == 3:
+                msg = Twist2DStamped()
+                msg.v = 0.5
+                msg.omega = 45.0
+                self.pub_car_cmd.publish(msg)
+                time.sleep(2)
+                
+            # stop robot
+            msg2 = Twist2DStamped()
+            msg.v = 0.0
+            msg.omega = 0.0
+            self.pub_car_cmd.publish(msg2)
+            return True
         
         def setLaneControl(self, enabled):
             self.log('Setting lane control: {}'.format(enabled))
@@ -65,19 +74,14 @@ try:
         def drive_intersection(self, direction):
             self.log('drive_intersection called! state: {}'.format(self.drive_state))
             if self.drive_state == 0:
-                # Open loop turn
-                self.openLoopTurn(direction)
-                self.finished_turn = False
-                self.drive_state = 1
-            elif self.drive_state == 1:
                 # wait for turn to finish
-                if self.finished_turn:
-                    self.drive_state = 2
-            elif self.drive_state == 2:
+                if self.openLoopTurn(direction):
+                    self.drive_state = 1
+            elif self.drive_state == 1:
                 self.setLaneControl(True)
                 self.at_intersection = False
-                self.drive_state = 3
-            elif self.drive_state == 3:
+                self.drive_state = 2
+            elif self.drive_state == 2:
                 # drive until we are at the intersection
                 if self.at_intersection:
                     self.setLaneControl(False)

@@ -45,7 +45,6 @@ class DuckyNode(object):
 
         # create subscriber to read stopline data from filter node
         self.sub_topic_b = rospy.Subscriber(STOP_LINE_TOPIC, StopLineReading, self.handle_stop_line_msg)
-        self.sub_finish_turn = rospy.Subscriber(INTERSECTION_DONE_TOPIC, BoolStamped, self.handle_intersection_done_msg)
 
         # Create a timer that calls the cbTimer function every 1.0 second
         self.timer = rospy.Timer(rospy.Duration.from_sec(self.bot_timestep), self.periodic_task)
@@ -73,18 +72,14 @@ class DuckyNode(object):
         # Update DuckyIO with information
         #self.ducky_bot.io.log('stop_line_detected: {}, at_stop_line: {}'.format(msg.stop_line_detected, msg.at_stop_line))
         self.ducky_bot.io.at_intersection = msg.at_stop_line
-
-    def handle_intersection_done_msg(self, msg):
-        self.ducky_bot.io.finished_turn = msg.data
-
+    
     def periodic_task(self, event):
         # get to intersection to begin state machine
         if not self.initial_calibrate:
             self.ducky_bot.io.openLoopTurn(0)
             # if self.ducky_bot.io.drive_intersection(-1):
             #     self.initial_calibrate = True
-            if self.ducky_bot.io.finished_turn:
-                self.initial_calibrate = True
+            self.initial_calibrate = True
         else:
             # self.ducky_bot.state_machine()
             pass
