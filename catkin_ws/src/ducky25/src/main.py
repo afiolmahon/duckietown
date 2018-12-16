@@ -16,6 +16,10 @@ SIMULATOR = True
 TIMESTEP = 0.5
 NODE_NAME = 'ducky25'
 
+INTERSECTION_DONE_TOPIC = "/ducky25/open_loop_intersection_control_node/intersection_done"
+STOP_LINE_TOPIC = "/ducky25/open_loop_intersection_control_node/stop_line_reading"
+LANE_CONTROL_ENABLED_TOPIC = "/ducky25/lane_controller_node/enabled"
+
 class DuckyNode(object):
     ''' Node behavior is defined here '''
 
@@ -29,11 +33,11 @@ class DuckyNode(object):
         self.bot_timestep = self.setupParameter('~bot_timestep', time_step)
         
         # create publisher to enable/disable lane control
-        self.pub_lane_control = rospy.Publisher("~lane_control_enabled", BoolStamped, queue_size=1)
+        self.pub_lane_control = rospy.Publisher(LANE_CONTROL_ENABLED_TOPIC, BoolStamped, queue_size=1)
 
         # create subscriber to read stopline data from filter node
-        self.sub_topic_b = rospy.Subscriber("~stop_line_reading", StopLineReading, self.handle_stop_line_msg)
-        self.sub_finish_turn = rospy.Subscriber("~intersection_done", BoolStamped, self.handle_intersection_done_msg)
+        self.sub_topic_b = rospy.Subscriber(STOP_LINE_TOPIC, StopLineReading, self.handle_stop_line_msg)
+        self.sub_finish_turn = rospy.Subscriber(INTERSECTION_DONE_TOPIC, BoolStamped, self.handle_intersection_done_msg)
 
         # Create a timer that calls the cbTimer function every 1.0 second
         self.timer = rospy.Timer(rospy.Duration.from_sec(self.bot_timestep), self.periodic_task)
