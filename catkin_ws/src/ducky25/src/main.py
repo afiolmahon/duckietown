@@ -68,16 +68,16 @@ class DuckyNode(object):
             pass
         elif direction == 0:
             msg = Twist2DStamped()
-            msg.v = 0.5
+            msg.v = 1.0
             msg.omega = 0.0
             self.pub_car_cmd.publish(msg)
-            time.sleep(2)
+            time.sleep(3)
         elif direction == 1:
             msg = Twist2DStamped()
             msg.v = 1.0
             msg.omega = -10.0
             self.pub_car_cmd.publish(msg)
-            time.sleep(1.0)
+            time.sleep(1.3)
         elif direction == 2:
             raise Exception('cant go backward!')
         elif direction == 3:
@@ -104,7 +104,7 @@ class DuckyNode(object):
         # get to intersection to begin state machine
         if not self.initial_calibrate:
             time.sleep(5)
-            self.openLoopTurn(1)
+            self.openLoopTurn(0)
             # if self.ducky_bot.io.drive_intersection(-1):
             #     self.initial_calibrate = True
             self.initial_calibrate = True
