@@ -38,7 +38,7 @@ try:
             else:
                 self.log('turn begin!')
                 self.open_turn_func(0.5, 90.0)
-                time.sleep(0.5)
+                time.sleep(5)
                 self.open_turn_func(0.0, 0.0)
                 self.log('turn end!')
 
