@@ -106,6 +106,7 @@ class DuckyNode(object):
             time.sleep(5)
             #self.openLoopTurn(3)
             if self.ducky_bot.io.drive_intersection(-1):
+                self.ducky_bot.io.log('initial calibration complete')
                 self.initial_calibrate = True
             #self.initial_calibrate = True
         else:
