@@ -32,7 +32,7 @@ try:
 
     class ROSIO(DuckyIO):
         def __init__(self):
-            self.drive_state = 2
+            self.drive_state = 0
             self.at_intersection = False
             self.lane_control_func = lambda x: self.log('Fake enable set to {}'.format(x))
             self.open_loop_turn_cmd = fake
