@@ -18,6 +18,7 @@ NODE_NAME = 'ducky25'
 
 STOP_LINE_TOPIC = "/ducky25/stop_line_filter_node/stop_line_reading"
 LANE_CONTROL_ENABLED_TOPIC = "/ducky25/lane_controller_node/enabled"
+TOPIC_CAR_CMD = "/ducky25/lane_controller_node/car_cmd"
 
 class DuckyNode(object):
     ''' Node behavior is defined here '''
@@ -33,6 +34,8 @@ class DuckyNode(object):
         
         # create publisher to enable/disable lane control
         self.pub_lane_control = rospy.Publisher(LANE_CONTROL_ENABLED_TOPIC, BoolStamped, queue_size=1)
+
+        self.pub_car_cmd = rospy.Publisher(TOPIC_CAR_CMD, Twist2DStamped, queue_size=1)
 
         # create subscriber to read stopline data from filter node
         self.sub_topic_b = rospy.Subscriber(STOP_LINE_TOPIC, StopLineReading, self.handle_stop_line_msg)
@@ -58,6 +61,39 @@ class DuckyNode(object):
         msg = BoolStamped()
         msg.data = enabled
         self.pub_lane_control.publish(msg)
+
+    def openLoopTurn(self, direction):
+        self.ducky_bot.io.log("beginning open loop turn in dir {}".format(direction))
+        if direction == -1:
+            pass
+        elif direction == 0:
+            msg = Twist2DStamped()
+            msg.v = 0.5
+            msg.omega = 0.0
+            self.pub_car_cmd.publish(msg)
+            time.sleep(2)
+        elif direction == 1:
+            msg = Twist2DStamped()
+            msg.v = 0.5
+            msg.omega = -45.0
+            self.pub_car_cmd.publish(msg)
+            time.sleep(2)
+        elif direction == 2:
+            raise Exception('cant go backward!')
+        elif direction == 3:
+            msg = Twist2DStamped()
+            msg.v = 0.5
+            msg.omega = 45.0
+            self.pub_car_cmd.publish(msg)
+            time.sleep(2)
+
+        # stop robot
+        msg2 = Twist2DStamped()
+        msg.v = 0.0
+        msg.omega = 0.0
+        self.pub_car_cmd.publish(msg2)
+        self.ducky_bot.io.log("turn complete returning")
+        return True
 
     def handle_stop_line_msg(self, msg):
         # Update DuckyIO with information
