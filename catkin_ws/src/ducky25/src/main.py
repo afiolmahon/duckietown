@@ -41,6 +41,7 @@ class DuckyNode(object):
         self.sub_topic_b = rospy.Subscriber(STOP_LINE_TOPIC, StopLineReading, self.handle_stop_line_msg)
 
         # Create a timer that calls the cbTimer function every 1.0 second
+        time.sleep(5)
         self.timer = rospy.Timer(rospy.Duration.from_sec(self.bot_timestep), self.periodic_task)
         rospy.loginfo('[%s] Initialzed.' %(self.node_name))
 
@@ -106,7 +107,6 @@ class DuckyNode(object):
         self.ducky_bot.io.at_intersection = self.at_intersection
         # get to intersection to begin state machine
         if not self.initial_calibrate:
-            time.sleep(5)
             #self.openLoopTurn(3)
             if self.ducky_bot.io.drive_intersection(-1):
                 self.ducky_bot.io.log('initial calibration complete')
