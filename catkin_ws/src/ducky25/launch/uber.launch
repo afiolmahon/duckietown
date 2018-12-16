@@ -47,7 +47,7 @@
         <arg name="param_file_name" value="$(arg param_file_name)"/>        
     </include>
 
-	<remap from="duckyuber/car_cmd" to="lane_controller_node/car_cmd">
+	<remap from="duckyuber/car_cmd" to="lane_controller_node/car_cmd" />
 	<node name="duckyuber" pkg="ducky25" type="main.py" output="screen">
 		<!-- Setup parameters -->
 		<param name="~bot_timestep" value="0.5"/>
