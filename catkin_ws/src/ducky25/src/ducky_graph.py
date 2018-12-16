@@ -82,5 +82,5 @@ class DuckyGraph:
     def get_path(self, n1, n2):
         # TODO implement
         """ use pathfinding algorithm to return a series of nodes from start to end path"""
-        return ['A', 'B', 'C']
+        return ['A', 'D', 'C']
 

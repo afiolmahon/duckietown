@@ -104,13 +104,12 @@ class DuckyNode(object):
         # get to intersection to begin state machine
         if not self.initial_calibrate:
             time.sleep(5)
-            self.openLoopTurn(3)
-            # if self.ducky_bot.io.drive_intersection(-1):
-            #     self.initial_calibrate = True
-            self.initial_calibrate = True
+            #self.openLoopTurn(3)
+            if self.ducky_bot.io.drive_intersection(-1):
+                self.initial_calibrate = True
+            #self.initial_calibrate = True
         else:
-            # self.ducky_bot.state_machine()
-            pass
+            self.ducky_bot.state_machine()
 
     def on_shutdown(self):
         rospy.loginfo('[%s] Shutting down.' %(self.node_name))
@@ -119,7 +118,7 @@ class DuckyNode(object):
 def main():
     # Create State
     robot_io = ducky_io.ROSIO()
-    bot = ducky_bot.DuckyBot(ducky_graph.DuckyGraph(), robot_io, 'A', 0)
+    bot = ducky_bot.DuckyBot(ducky_graph.DuckyGraph(), robot_io, 'C', 0)
     # Intialize node
     rospy.init_node(NODE_NAME, anonymous=False, log_level=rospy.DEBUG)
     # Initialize representation objects
