@@ -4,7 +4,7 @@
 main.py
 Defines node for ROS
 '''
-from duckietown_msgs.msg import StopLineReading, BoolStamped, Twist2DStamped
+from duckietown_msgs.msg import StopLineReading, BoolStamped, Twist2DStamped, FSMState
 import rospy
 
 import ducky_bot
@@ -19,6 +19,7 @@ NODE_NAME = 'ducky25'
 INTERSECTION_DONE_TOPIC = "/ducky25/open_loop_intersection_control_node/intersection_done"
 STOP_LINE_TOPIC = "/ducky25/stop_line_filter_node/stop_line_reading"
 LANE_CONTROL_ENABLED_TOPIC = "/ducky25/lane_controller_node/enabled"
+OPEN_LOOP_MODE_TOPIC = "/ducky25/open_loop_intersection_control_node/mode"
 
 class DuckyNode(object):
     ''' Node behavior is defined here '''
@@ -34,6 +35,13 @@ class DuckyNode(object):
         
         # create publisher to enable/disable lane control
         self.pub_lane_control = rospy.Publisher(LANE_CONTROL_ENABLED_TOPIC, BoolStamped, queue_size=1)
+
+        # put open loop controller in intersection mode
+        self.open_loop_mode = rospy.Publisher(OPEN_LOOP_MODE_TOPIC, FSMState, queue_size=1)
+        
+        mode = FSMState()
+        mode.state = "INTERSECTION_CONTROL"
+        self.open_loop_mode.publish(mode)
 
         # create subscriber to read stopline data from filter node
         self.sub_topic_b = rospy.Subscriber(STOP_LINE_TOPIC, StopLineReading, self.handle_stop_line_msg)
