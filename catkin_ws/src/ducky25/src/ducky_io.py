@@ -12,6 +12,10 @@ DIR_BACK = 2
 DIR_LEFT = 3
 DIRS = [DIR_SRAIGHT, DIR_RIGHT, DIR_BACK, DIR_LEFT]
 
+SRV_TURN_S = "/ducky25/open_loop_intersection_control_node/turn_forward"
+SRV_TURN_L = "/ducky25/open_loop_intersection_control_node/turn_left"
+SRV_TURN_R = "/ducky25/open_loop_intersection_control_node/turn_right"
+
 class DuckyIO:
     '''Inteface to decouple ROS specific code'''
 
@@ -38,18 +42,18 @@ try:
                 if direction == -1:
                     pass
                 elif direction == 0:
-                    rospy.wait_for_service('turn_forward')
-                    turn_fwd = rospy.ServiceProxy('turn_forward', Empty)
+                    rospy.wait_for_service(SRV_TURN_S)
+                    turn_fwd = rospy.ServiceProxy(SRV_TURN_S, Empty)
                     turn_fwd()
                 elif direction == 1:
-                    rospy.wait_for_service('turn_right')
-                    turn_right = rospy.ServiceProxy('turn_right', Empty)
+                    rospy.wait_for_service(SRV_TURN_R)
+                    turn_right = rospy.ServiceProxy(SRV_TURN_R, Empty)
                     turn_right()
                 elif direction == 2:
                     raise Exception('cant go backward!')
                 elif direction == 3:
-                    rospy.wait_for_service('turn_left')
-                    turn_left = rospy.ServiceProxy('turn_left', Empty)
+                    rospy.wait_for_service(SRV_TURN_L)
+                    turn_left = rospy.ServiceProxy(SRV_TURN_L, Empty)
                     turn_left()
             except rospy.ServiceException as e:
                 self.log('service call failed {}'.format(e))
