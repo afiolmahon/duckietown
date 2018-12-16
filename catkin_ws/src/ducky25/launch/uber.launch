@@ -47,7 +47,10 @@
         <arg name="param_file_name" value="$(arg param_file_name)"/>        
     </include>
 
+	<remap from="duckyuber/lane_control_enabled" to="lane_controller_node/enabled" />
 	<remap from="duckyuber/car_cmd" to="lane_controller_node/car_cmd" />
+	<remap from="duckyuber/stop_line_reading" to="stop_line_filter_node/stop_line_reading" />
+	<remap from="duckyuber/intersection_done" to="open_loop_intersection_control_node/intersection_done" />
 	<node name="duckyuber" pkg="ducky25" type="main.py" output="screen">
 		<!-- Setup parameters -->
 		<param name="~bot_timestep" value="0.5"/>
@@ -63,6 +66,12 @@
         <arg name="local" value="$(arg local)"/>
         <arg name="config" value="$(arg config)"/>
     </include>
+
+
+	<!-- intersection controller -->
+	<node ns="$(arg veh)" if="$(arg local)" pkg="intersection_control" type="open_loop_intersection_control_node.py" name="open_loop_intersection_control_node" output="screen" clear_params="true" required="true">
+        <rosparam command="load" file="$(find duckietown)/config/$(arg config)/intersection_control/open_loop_intersection_node/$(arg param_file_name).yaml"/>
+    </node>
 
     <group if="$(arg drive)">
         <!-- Wheel Driver -->

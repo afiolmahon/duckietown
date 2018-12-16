@@ -24,26 +24,37 @@ class DuckyIO:
 
 try:
     import rospy
+    from std_srvs.srv import EmptyRequest, EmptyResponse, Empty
 
     class ROSIO(DuckyIO):
         def __init__(self):
             self.drive_state = 2
             self.at_intersection = False
+            self.finished_turn = False
             self.lane_control_func = lambda x: self.log('Fake enable set to {}'.format(x))
             self.open_turn_func = lambda v, o: self.log('Fake open turn: v {}  o {}'.format(v, o))
 
         def openLoopTurn(self, direction):
-            if direction == -1:
-                pass
-            else:
-                self.log('turn begin!')
-                self.open_turn_func(0.5, 90.0)
-                time.sleep(5)
-                self.open_turn_func(0.0, 0.0)
-                self.log('turn end!')
-
-
-
+            try:
+                if direction == -1:
+                    pass
+                elif direction == 0:
+                    rospy.wait_for_service('turn_forward')
+                    turn_fwd = rospy.ServiceProxy('turn_forward', Empty)
+                    turn_fwd()
+                elif direction == 1:
+                    rospy.wait_for_service('turn_right')
+                    turn_right = rospy.ServiceProxy('turn_right', Empty)
+                    turn_right()
+                elif direction == 2:
+                    raise Exception('cant go backward!')
+                elif direction == 3:
+                    rospy.wait_for_service('turn_left')
+                    turn_left = rospy.ServiceProxy('turn_left', Empty)
+                    turn_left()
+            except rospy.ServiceException as e:
+                self.log('service call failed {}'.format(e))
+        
         def setLaneControl(self, enabled):
             self.log('Setting lane control: {}'.format(enabled))
             self.lane_control_func(enabled)
@@ -53,11 +64,17 @@ try:
             if self.drive_state == 0:
                 # Open loop turn
                 self.openLoopTurn(direction)
+                self.finished_turn = False
                 self.drive_state = 1
             elif self.drive_state == 1:
-                self.setLaneControl(True)
-                self.drive_state = 2
+                # wait for turn to finish
+                if self.finished_turn:
+                    self.drive_state = 2
             elif self.drive_state == 2:
+                self.setLaneControl(True)
+                self.at_intersection = False
+                self.drive_state = 3
+            elif self.drive_state == 3:
                 # drive until we are at the intersection
                 if self.at_intersection:
                     self.setLaneControl(False)
