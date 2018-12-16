@@ -17,7 +17,7 @@ TIMESTEP = 0.5
 NODE_NAME = 'ducky25'
 
 INTERSECTION_DONE_TOPIC = "/ducky25/open_loop_intersection_control_node/intersection_done"
-STOP_LINE_TOPIC = "/ducky25/open_loop_intersection_control_node/stop_line_reading"
+STOP_LINE_TOPIC = "/ducky25/stop_line_filter_node/stop_line_reading"
 LANE_CONTROL_ENABLED_TOPIC = "/ducky25/lane_controller_node/enabled"
 
 class DuckyNode(object):
