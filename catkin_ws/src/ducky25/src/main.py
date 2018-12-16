@@ -74,7 +74,7 @@ class DuckyNode(object):
             time.sleep(2)
         elif direction == 1:
             msg = Twist2DStamped()
-            msg.v = 0.5
+            msg.v = 1
             msg.omega = -20.0
             self.pub_car_cmd.publish(msg)
             time.sleep(1)
