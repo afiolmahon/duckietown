@@ -71,7 +71,6 @@ try:
 
 except ImportError as e:
     raise Exception('Cant import ROS!')
-    print('error loading rospy')
 
 
 class TestIO(DuckyIO):

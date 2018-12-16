@@ -73,11 +73,9 @@ class DuckyNode(object):
         # get to intersection to begin state machine
         if not self.initial_calibrate:
             if self.ducky_bot.io.drive_intersection(-1,0):
+                self.ducky_bot.io.openLoopTurn(0)
                 self.initial_calibrate = True
         else:
-            self.ducky_bot.io.openLoopTurn(0)
-            while True:
-                time.sleep(1)
             # self.ducky_bot.state_machine()
             pass
 
