@@ -49,7 +49,6 @@ try:
                     self.drive_state = 1
             elif self.drive_state == 1:
                 self.setLaneControl(True)
-                self.at_intersection = False
                 self.drive_state = 2
             elif self.drive_state == 2:
                 # drive until we are at the intersection

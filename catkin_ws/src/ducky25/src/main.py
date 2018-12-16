@@ -46,6 +46,7 @@ class DuckyNode(object):
 
         # State information for writing at beginning of periodic task
         self.initial_calibrate = False
+        self.at_intersection = False
         self.ducky_bot.io.lane_control_func = self.set_lane_control_enable
         self.ducky_bot.io.open_loop_turn_cmd = self.openLoopTurn
 
@@ -99,9 +100,10 @@ class DuckyNode(object):
     def handle_stop_line_msg(self, msg):
         # Update DuckyIO with information
         #self.ducky_bot.io.log('stop_line_detected: {}, at_stop_line: {}'.format(msg.stop_line_detected, msg.at_stop_line))
-        self.ducky_bot.io.at_intersection = msg.at_stop_line
+        self.at_intersection = msg.at_stop_line
     
     def periodic_task(self, event):
+        self.ducky_bot.io.at_intersection = self.at_intersection
         # get to intersection to begin state machine
         if not self.initial_calibrate:
             time.sleep(5)
