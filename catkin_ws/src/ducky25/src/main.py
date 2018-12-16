@@ -4,7 +4,7 @@
 main.py
 Defines node for ROS
 '''
-from duckietown_msgs.msg import StopLineReading, BoolStamped
+from duckietown_msgs.msg import StopLineReading, BoolStamped, Twist2DStamped
 
 import rospy
 
@@ -31,6 +31,7 @@ class DuckyNode(object):
         
         # create publisher to enable/disable lane control
         self.pub_lane_control = rospy.Publisher("/ducky25/lane_controller_node/enabled", BoolStamped, queue_size=1)
+        self.pub_car_cmd = rospy.Publisher("/ducky25/lane_controller_node/car_cmd", Twist2DStamped, queue_size=1)
 
         # create subscriber to read stopline data from filter node
         self.sub_topic_b = rospy.Subscriber("/ducky25/stop_line_filter_node/stop_line_reading", StopLineReading, self.handle_stopline_reading)
@@ -42,6 +43,7 @@ class DuckyNode(object):
         self.initial_calibrate = False
         self.is_at_intersection = False
         self.ducky_bot.io.lane_control_func = self.set_lane_control_enable
+        self.ducky_bot.io.open_turn_func = self.open_loop_turn_control
 
 
     def setupParameter(self,param_name,default_value):
@@ -55,6 +57,12 @@ class DuckyNode(object):
         msg.data = enabled
         self.pub_lane_control.publish(msg)
 
+    def open_loop_turn_control(self, v, o):
+        car_control_msg = Twist2DStamped()
+        car_control_msg.v = v
+        car_control_msg.omega = 0
+        self.pub_car_cmd.publish(car_control_msg)
+
     def handle_stopline_reading(self, msg):
         # Update DuckyIO with information
         #self.ducky_bot.io.log('stop_line_detected: {}, at_stop_line: {}'.format(msg.stop_line_detected, msg.at_stop_line))
@@ -64,9 +72,12 @@ class DuckyNode(object):
         self.ducky_bot.io.at_intersection = self.is_at_intersection
         # get to intersection to begin state machine
         if not self.initial_calibrate:
-            if self.ducky_bot.io.drive_intersection(0,0):
+            if self.ducky_bot.io.drive_intersection(-1,0):
                 self.initial_calibrate = True
         else:
+            self.ducky_bot.io.openLoopTurn(0)
+            while True:
+                time.sleep(1)
             # self.ducky_bot.state_machine()
             pass
 

@@ -27,9 +27,9 @@ class DuckyBot:
 		self.command = CMD_PASS
 		self.next_node_id = None
 
-	def drive(self, command, artag=-1):
+	def drive(self, command):
 		''' Drive to next node, will drive to intersection if artag=-1 otherwise will drive to specified tag '''
-		return True if command == CMD_PASS else self.io.drive_intersection(command, artag)	
+		return True if command == CMD_PASS else self.io.drive_intersection(command)	
 
 	def state_machine(self):
 		if self.state == 0:

@@ -3,6 +3,7 @@ ducky_io.py
 
 define input and output specific to ros so logic can be run/tested without ros installed
 '''
+import time
 
 # Direction definitons
 DIR_SRAIGHT = 0
@@ -29,15 +30,25 @@ try:
             self.drive_state = 2
             self.at_intersection = False
             self.lane_control_func = lambda x: self.log('Fake enable set to {}'.format(x))
+            self.open_turn_func = lambda v, o: self.log('Fake open turn: v {}  o {}'.format(v, o))
 
         def openLoopTurn(self, direction):
-            pass
+            if direction == -1:
+                pass
+            else:
+                self.log('turn begin!')
+                self.open_turn_func(0.5, 90.0)
+                time.sleep(0.5)
+                self.open_turn_func(0.0, 0.0)
+                self.log('turn end!')
+
+
 
         def setLaneControl(self, enabled):
             self.log('Setting lane control: {}'.format(enabled))
             self.lane_control_func(enabled)
 
-        def drive_intersection(self, direction, tagid=-1):
+        def drive_intersection(self, direction):
             self.log('drive_intersection called! state: {}'.format(self.drive_state))
             if self.drive_state == 0:
                 # Open loop turn
