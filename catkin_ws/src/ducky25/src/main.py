@@ -103,7 +103,7 @@ class DuckyNode(object):
     def periodic_task(self, event):
         # get to intersection to begin state machine
         if not self.initial_calibrate:
-            self.ducky_bot.io.openLoopTurn(0)
+            self.openLoopTurn(0)
             # if self.ducky_bot.io.drive_intersection(-1):
             #     self.initial_calibrate = True
             self.initial_calibrate = True
