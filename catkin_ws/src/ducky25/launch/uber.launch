@@ -59,8 +59,8 @@
 	<!-- intersection controller -->
 	<remap from="open_loop_intersection_control_node/car_cmd" to="lane_controller_node/car_cmd"/>
 	<remap from="open_loop_intersection_control_node/stop_line_reading" to="stop_line_filter_node/stop_line_reading"/>
-	<remap from="open_loop_intersection_control_node/in_lane" to="stop_line_filter_node/in_lane"/>
-	<remap from="open_loop_intersection_control_node/lane_pose" to="stop_line_filter_node/lane_pose"/>
+	<remap from="open_loop_intersection_control_node/in_lane" to="lane_filter_node/in_lane"/>
+	<remap from="open_loop_intersection_control_node/lane_pose" to="lane_filter_node/lane_pose"/>
 	<node ns="$(arg veh)" if="$(arg local)" pkg="intersection_control" type="open_loop_intersection_control_node.py" name="open_loop_intersection_control_node" output="screen" clear_params="true" required="true">
         <rosparam command="load" file="$(find duckietown)/config/$(arg config)/intersection_control/open_loop_intersection_node/$(arg param_file_name).yaml"/>
     </node>
