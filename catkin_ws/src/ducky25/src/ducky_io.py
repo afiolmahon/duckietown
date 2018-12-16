@@ -32,7 +32,6 @@ try:
             self.at_intersection = False
             self.finished_turn = False
             self.lane_control_func = lambda x: self.log('Fake enable set to {}'.format(x))
-            self.open_turn_func = lambda v, o: self.log('Fake open turn: v {}  o {}'.format(v, o))
 
         def openLoopTurn(self, direction):
             try:

@@ -30,7 +30,6 @@ class DuckyNode(object):
         
         # create publisher to enable/disable lane control
         self.pub_lane_control = rospy.Publisher("~lane_control_enabled", BoolStamped, queue_size=1)
-        self.pub_car_cmd = rospy.Publisher("~car_cmd", Twist2DStamped, queue_size=1)
 
         # create subscriber to read stopline data from filter node
         self.sub_topic_b = rospy.Subscriber("~stop_line_reading", StopLineReading, self.handle_stop_line_msg)
@@ -43,7 +42,6 @@ class DuckyNode(object):
         # State information for writing at beginning of periodic task
         self.initial_calibrate = False
         self.ducky_bot.io.lane_control_func = self.set_lane_control_enable
-        self.ducky_bot.io.open_turn_func = self.open_loop_turn_control
 
         self.set_lane_control_enable(False)
 
@@ -58,12 +56,6 @@ class DuckyNode(object):
         msg = BoolStamped()
         msg.data = enabled
         self.pub_lane_control.publish(msg)
-
-    def open_loop_turn_control(self, v, o):
-        car_control_msg = Twist2DStamped()
-        car_control_msg.v = v
-        car_control_msg.omega = 0
-        self.pub_car_cmd.publish(car_control_msg)
 
     def handle_stop_line_msg(self, msg):
         # Update DuckyIO with information
