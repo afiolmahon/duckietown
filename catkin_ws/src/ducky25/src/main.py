@@ -31,7 +31,7 @@ class DuckyNode(object):
         
         # create publisher to enable/disable lane control
         self.pub_lane_control = rospy.Publisher("/ducky25/lane_controller_node/enabled", BoolStamped, queue_size=1)
-        self.pub_car_cmd = rospy.Publisher("/ducky25/lane_controller_node/car_cmd", Twist2DStamped, queue_size=1)
+        self.pub_car_cmd = rospy.Publisher("~car_cmd", Twist2DStamped, queue_size=1)
 
         # create subscriber to read stopline data from filter node
         self.sub_topic_b = rospy.Subscriber("/ducky25/stop_line_filter_node/stop_line_reading", StopLineReading, self.handle_stopline_reading)
