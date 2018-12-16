@@ -90,8 +90,8 @@ class DuckyNode(object):
 
         # stop robot
         msg2 = Twist2DStamped()
-        msg.v = 0.0
-        msg.omega = 0.0
+        msg2.v = 0.0
+        msg2.omega = 0.0
         self.pub_car_cmd.publish(msg2)
         self.ducky_bot.io.log("turn complete returning")
         return True
