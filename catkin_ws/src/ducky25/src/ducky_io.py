@@ -37,6 +37,7 @@ try:
             self.pub_car_cmd = rospy.Publisher(TOPIC_CAR_CMD, Twist2DStamped, queue_size=1)
 
         def openLoopTurn(self, direction):
+            self.log("beginning open loop turn in dir {}".format(direction))
             if direction == -1:
                 pass
             elif direction == 0:
@@ -59,12 +60,13 @@ try:
                 msg.omega = 45.0
                 self.pub_car_cmd.publish(msg)
                 time.sleep(2)
-                
+
             # stop robot
             msg2 = Twist2DStamped()
             msg.v = 0.0
             msg.omega = 0.0
             self.pub_car_cmd.publish(msg2)
+            self.log("turn complete returning")
             return True
         
         def setLaneControl(self, enabled):
