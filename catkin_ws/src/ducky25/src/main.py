@@ -74,10 +74,10 @@ class DuckyNode(object):
             time.sleep(2)
         elif direction == 1:
             msg = Twist2DStamped()
-            msg.v = 1
-            msg.omega = -20.0
+            msg.v = 2.0
+            msg.omega = -10.0
             self.pub_car_cmd.publish(msg)
-            time.sleep(1)
+            time.sleep(0.5)
         elif direction == 2:
             raise Exception('cant go backward!')
         elif direction == 3:
