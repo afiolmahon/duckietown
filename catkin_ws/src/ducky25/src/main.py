@@ -47,6 +47,7 @@ class DuckyNode(object):
         # State information for writing at beginning of periodic task
         self.initial_calibrate = False
         self.ducky_bot.io.lane_control_func = self.set_lane_control_enable
+        self.ducky_bot.io.open_loop_turn_cmd = self.openLoopTurn
 
         self.set_lane_control_enable(False)
 

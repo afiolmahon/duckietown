@@ -28,7 +28,7 @@ try:
     from duckietown_msgs.msg import Twist2DStamped
 
     def fake(x):
-        return False
+        raise Exception('dont call this, need to bind open_loop_turn_cmd')
 
     class ROSIO(DuckyIO):
         def __init__(self):
