@@ -15,7 +15,7 @@ DIRS = [DIR_SRAIGHT, DIR_RIGHT, DIR_BACK, DIR_LEFT]
 class DuckyIO:
     '''Inteface to decouple ROS specific code'''
 
-    def drive_intersection(self, direction, tagid=-1):
+    def drive_intersection(self, direction):
         ''' return true when intersection is reached, false otherwise '''
         raise Exception('Method drive_intersection unimplemented')
 
@@ -74,8 +74,8 @@ except ImportError as e:
 
 
 class TestIO(DuckyIO):
-    def drive_intersection(self, direction, tagid=-1):
-        print('[ROSInterface]Driving in {} direction, tagid is {}'.format(direction, tagid))
+    def drive_intersection(self, direction):
+        print('[ROSInterface]Driving in {} direction'.format(direction))
         return True
 
     def log(self, message):
